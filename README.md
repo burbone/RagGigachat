@@ -1,72 +1,82 @@
-# RAG Ассистент
+# RAG Assistant
 
-FastAPI + GigaChat + гибридный поиск (BM25 + dense) + CrossEncoder reranking.
+> Загрузите документ — задайте вопрос. Ответ строго по содержимому файла.
+
+![Скриншот интерфейса](screenshot.png)
+
+[English version](README.en.md)
+
+---
+
+## Содержание
+
+- [Возможности](#возможности)
+- [Быстрый старт](#быстрый-старт)
+- [CLI](#cli)
+- [Переменные окружения](#переменные-окружения)
+- [Требования](#требования)
+
+---
+
+## Возможности
+
+- **Форматы:** PDF, DOCX, TXT, MD
+- **Гибридный поиск:** BM25 + векторные эмбеддинги
+- **Умное чанкирование:** parent-child стратегия, таблицы не разрезаются
+- **Кэш на диске:** эмбеддинги сохраняются между сессиями
+- **Генерация ответов:** GigaChat
+
+---
 
 ## Быстрый старт
 
 ```bash
-# 1. Установить зависимости
+git clone https://github.com/username/rag-assistant.git
+cd rag-assistant
+
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+
 pip install -r requirements.txt
 
-# 2. Создать .env
-cp .env .env
-# Вписать GIGACHAT_CREDENTIALS в .env
+cp .env.example .env             # укажите GIGACHAT_CREDENTIALS
 
-# 3. Запустить
-uvicorn api:app --reload
-# Открыть http://127.0.0.1:8000
+python main.py serve
 ```
 
-## Модели эмбеддингов
+Откройте [http://localhost:8000](http://localhost:8000)
 
-По умолчанию используется `paraphrase-multilingual-MiniLM-L12-v2` (~120 MB).  
-Скачается автоматически при первом запуске.
-
-Если нужно лучшее качество и есть свободные 2.3 GB — в `.env`:
-```
-LOCAL_EMBEDDING_MODEL=BAAI/bge-m3
-```
-
-### Очистить кэш BGE-M3 (если скачалась случайно)
-
-```
-# Windows
-rmdir /s /q %USERPROFILE%\.cache\huggingface\hub\models--BAAI--bge-m3
-
-# Linux / Mac
-rm -rf ~/.cache/huggingface/hub/models--BAAI--bge-m3
-```
+---
 
 ## CLI
 
-```bash
-python main.py index data/documents/file.pdf
-python main.py ask   data/documents/file.pdf "Какая комиссия за снятие?"
-python main.py serve --reload
-```
-
-## Тесты
+Индексация документа:
 
 ```bash
-pytest tests/ -v
+python main.py index document.pdf
 ```
 
-## Структура
+Вопрос по документу:
 
+```bash
+python main.py ask document.pdf "Какая комиссия?"
 ```
-src/
-  ingestion/
-    document_loader.py   # PDF + DOCX + TXT/MD, таблицы через pdfplumber
-    chunker.py           # Parent-Child чанкинг, таблицы не разрезаются
-  embeddings/
-    embedder.py          # GigaChat API + локальная модель, гибрид
-  retrieval/
-    vector_store.py      # ChromaDB
-    retriever.py         # BM25 + dense + query expansion + CrossEncoder rerank
-  generation/
-    llm.py               # GigaChat LLM
-  pipeline.py            # Оркестратор
-  models.py              # Все типы данных
-api.py                   # FastAPI
-main.py                  # CLI (typer)
-```
+
+---
+
+## Переменные окружения
+
+Скопируйте `.env.example` в `.env` и заполните:
+
+| Переменная | Описание |
+|---|---|
+| `GIGACHAT_CREDENTIALS` | Ключ доступа к GigaChat API |
+| `LOCAL_EMBEDDING_MODEL` | Название модели эмбеддингов |
+| `USE_RERANKER` | Использовать реранкер: `true` / `false` |
+
+---
+
+## Требования
+
+- Python 3.11+
+- Зависимости: `requirements.txt`
