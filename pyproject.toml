@@ -1,0 +1,26 @@
+[project]
+name = "rag-project"
+version = "0.1.0"
+description = "RAG pipeline with GigaChat"
+requires-python = ">=3.11"
+dependencies = [
+    "pdfplumber>=0.11",
+    "langchain>=0.3",
+    "langchain-community>=0.3",
+    "chromadb>=0.5",
+    "gigachat>=0.1",
+    "python-dotenv>=1.0",
+    "rank-bm25>=0.2",
+    "sentence-transformers>=5.2.3",
+    "fastapi>=0.135.1",
+    "uvicorn>=0.41.0",
+    "python-multipart>=0.0.22",
+    "pymupdf4llm>=1.27.2.1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

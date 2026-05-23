@@ -1,0 +1,17 @@
+[
+  {
+    "question": "Какая комиссия за снятие наличных?",
+    "ground_truth": "1.5%",
+    "relevant_pages": [1]
+  },
+  {
+    "question": "Какова стоимость обслуживания карты?",
+    "ground_truth": "0 рублей",
+    "relevant_pages": [2]
+  },
+  {
+    "question": "Какой лимит на снятие наличных в день?",
+    "ground_truth": "100 000 рублей",
+    "relevant_pages": [1]
+  }
+]
